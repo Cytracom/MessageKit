@@ -101,6 +101,13 @@ open class MessageLabel: UILabel {
         }
     }
 
+    open var lineFragmentPadding: CGFloat {
+        didSet {
+            textContainer.lineFragmentPadding = lineFragmentPadding
+            if !isConfiguring { setNeedsDisplay() }
+        }
+    }
+
     open override var textAlignment: NSTextAlignment {
         didSet {
             setTextStorage(attributedText, shouldParse: false)
@@ -119,8 +126,10 @@ open class MessageLabel: UILabel {
         size.height += textInsets.vertical
         return size
     }
-    
-    internal var messageLabelFont: UIFont?
+
+    var isHeader = false
+    let messageLabelFont: UIFont = UIFont(fontStyle: .graphikRegular, size: 14.0)!
+    let headerLabelFont: UIFont = UIFont(fontStyle: .graphikBold, size: 14.0)!
 
     private var attributesNeedUpdate = false
 
@@ -128,7 +137,8 @@ open class MessageLabel: UILabel {
         return [
             NSAttributedString.Key.foregroundColor: UIColor.darkText,
             NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue,
-            NSAttributedString.Key.underlineColor: UIColor.darkText
+            NSAttributedString.Key.underlineColor: UIColor.darkText,
+            NSAttributedString.Key.font: UIFont(fontStyle: .graphikRegular, size: 14.0)!
         ]
     }()
 
@@ -177,13 +187,20 @@ open class MessageLabel: UILabel {
     // MARK: - Initializers
 
     public override init(frame: CGRect) {
+        self.lineFragmentPadding = 0.0
         super.init(frame: frame)
         setupView()
     }
 
     public required init?(coder aDecoder: NSCoder) {
+        self.lineFragmentPadding = 0.0
         super.init(coder: aDecoder)
         setupView()
+    }
+
+    convenience init(isHeader: Bool = false) {
+        self.init()
+        self.isHeader = isHeader
     }
 
     // MARK: - Open Methods
@@ -222,19 +239,21 @@ open class MessageLabel: UILabel {
             setNeedsDisplay()
             return
         }
-        
+
         let style = paragraphStyle(for: newText)
         let range = NSRange(location: 0, length: newText.length)
-        
+
         let mutableText = NSMutableAttributedString(attributedString: newText)
         mutableText.addAttribute(.paragraphStyle, value: style, range: range)
-        
+        mutableText.enumerateAttribute(.font, in: range, options: []) { value, range, stop in
+            mutableText.addAttributes([.font: self.isHeader ? self.headerLabelFont : self.messageLabelFont], range: range)
+        }
         if shouldParse {
             rangesForDetectors.removeAll()
             let results = parse(text: mutableText)
             setRangesForDetectors(in: results)
         }
-        
+
         for (detector, rangeTuples) in rangesForDetectors {
             if enabledDetectors.contains(detector) {
                 let attributes = detectorAttributes(for: detector)

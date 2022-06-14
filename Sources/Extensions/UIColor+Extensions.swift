@@ -26,6 +26,22 @@ import Foundation
 import UIKit
 
 internal extension UIColor {
+    convenience init(red: Int, green: Int, blue: Int) {
+        assert(red >= 0 && red <= 255, "Invalid red component")
+        assert(green >= 0 && green <= 255, "Invalid green component")
+        assert(blue >= 0 && blue <= 255, "Invalid blue component")
+        self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
+    }
+
+    convenience init(netHex:Int) {
+        self.init(red:(netHex >> 16) & 0xff, green:(netHex >> 8) & 0xff, blue:netHex & 0xff)
+    }
+
+    static let incomingGray = UIColor(red: 230/255, green: 230/255, blue: 235/255, alpha: 1.0)
+
+    static let outgoingGreen = UIColor(red: 69/255, green: 214/255, blue: 93/255, alpha: 1.0)
+
+    static let playButtonLightGray = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1.0)
 
     private static func colorFromAssetBundle(named: String) -> UIColor {
         guard let color = UIColor(named: named, in: Bundle.messageKitAssetBundle, compatibleWith: nil) else {
@@ -54,4 +70,16 @@ internal extension UIColor {
     
     static var avatarViewBackground: UIColor { colorFromAssetBundle(named: "avatarViewBackground") }
 
+    static let smsGreen = UIColor(red:0.602, green:0.792, blue:0.377, alpha:1.000)
+    static let c2cBlue = UIColor(red:0.005, green:0.458, blue:0.850, alpha:1.000)
+
+    static let royalBlue = UIColor(netHex: 0x1E96FC)
+    static let globalTintColor = UIColor(netHex: 0xE9E9EC)
+    static let darkGrey = UIColor(netHex: 0x1E1F20)
+
+    // MARK: - Messaging Colors
+    static let messagingThreadBackgroundColor = UIColor(netHex: 0xFAFAFA)
+    static let messagingLightGray = UIColor(netHex: 0x8F92A1)
+    static let messagingPrivateChatModeEnabled = UIColor(netHex: 0xFBAB3D)
+    static let internalMessageBackground = UIColor(netHex: 0xFAEAD4)
 }

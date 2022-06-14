@@ -30,20 +30,20 @@ open class MessagesCollectionViewLayoutAttributes: UICollectionViewLayoutAttribu
     // MARK: - Properties
 
     public var avatarSize: CGSize = .zero
-    public var avatarPosition = AvatarPosition(vertical: .cellBottom)
-    public var avatarLeadingTrailingPadding: CGFloat = 0
+    public var avatarPosition = AvatarPosition(vertical: .cellTop)
+    public var avatarLeadingTrailingPadding: CGFloat = 16.0
 
     public var messageContainerSize: CGSize = .zero
-    public var messageContainerPadding: UIEdgeInsets = .zero
-    public var messageLabelFont: UIFont = UIFont.preferredFont(forTextStyle: .body)
-    public var messageLabelInsets: UIEdgeInsets = .zero
+    public var messageContainerPadding: UIEdgeInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
+    public var messageLabelFont: UIFont = UIFont(fontStyle: .graphikBold, size: 14.0)!
+    public var messageLabelInsets: UIEdgeInsets = UIEdgeInsets(top: 0.0, left: 19.0, bottom: 0.0, right: 19.0)
 
-    public var cellTopLabelAlignment = LabelAlignment(textAlignment: .center, textInsets: .zero)
+    public var cellTopLabelAlignment = LabelAlignment(textAlignment: .center, textInsets: UIEdgeInsets(top: 0.0, left: 4.0, bottom: 0.0, right: 4.0))
     public var cellTopLabelSize: CGSize = .zero
-    
+
     public var cellBottomLabelAlignment = LabelAlignment(textAlignment: .center, textInsets: .zero)
     public var cellBottomLabelSize: CGSize = .zero
-    
+
     public var messageTopLabelAlignment = LabelAlignment(textAlignment: .center, textInsets: .zero)
     public var messageTopLabelSize: CGSize = .zero
 
@@ -54,7 +54,7 @@ open class MessagesCollectionViewLayoutAttributes: UICollectionViewLayoutAttribu
 
     public var accessoryViewSize: CGSize = .zero
     public var accessoryViewPadding: HorizontalEdgeInsets = .zero
-    public var accessoryViewPosition: AccessoryPosition = .messageCenter
+    public var accessoryViewPosition: AccessoryPosition = .messageTop
 
     public var linkPreviewFonts = LinkPreviewFonts(titleFont: .preferredFont(forTextStyle: .footnote),
                                                    teaserFont: .preferredFont(forTextStyle: .caption2),

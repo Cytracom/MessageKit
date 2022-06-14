@@ -51,7 +51,7 @@ open class LinkPreviewMessageCell: TextMessageCell {
         linkPreviewView.domainLabel.font = attributes.linkPreviewFonts.domainFont
     }
 
-    open override func configure(with message: MessageType, at indexPath: IndexPath, and messagesCollectionView: MessagesCollectionView) {
+    open override func configure(with message: MessageType, at indexPath: IndexPath, and messagesCollectionView: MessagesCollectionView, mentionedFirstLastName: [String], isInternal: Bool) {
         let displayDelegate = messagesCollectionView.messagesDisplayDelegate
 
         if let textColor: UIColor = displayDelegate?.textColor(for: message, at: indexPath, in: messagesCollectionView) {
@@ -63,8 +63,7 @@ open class LinkPreviewMessageCell: TextMessageCell {
         guard case MessageKind.linkPreview(let linkItem) = message.kind else {
             fatalError("LinkPreviewMessageCell received unhandled MessageDataType: \(message.kind)")
         }
-
-        super.configure(with: message, at: indexPath, and: messagesCollectionView)
+        super.configure(with: message, at: indexPath, and: messagesCollectionView, mentionedFirstLastName: mentionedFirstLastName, isInternal: isInternal)
 
         linkPreviewView.titleLabel.text = linkItem.title
         linkPreviewView.teaserLabel.text = linkItem.teaser

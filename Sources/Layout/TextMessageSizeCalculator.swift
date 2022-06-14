@@ -27,10 +27,10 @@ import UIKit
 
 open class TextMessageSizeCalculator: MessageSizeCalculator {
 
-    public var incomingMessageLabelInsets = UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
-    public var outgoingMessageLabelInsets = UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18)
+    var incomingMessageLabelInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+    var outgoingMessageLabelInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
 
-    public var messageLabelFont = UIFont.preferredFont(forTextStyle: .body)
+    var messageLabelFont = UIFont(fontStyle: .graphikRegular, size: 14.0)!
 
     internal func messageLabelInsets(for message: MessageType) -> UIEdgeInsets {
         let dataSource = messagesLayout.messagesDataSource
@@ -50,8 +50,7 @@ open class TextMessageSizeCalculator: MessageSizeCalculator {
         var messageContainerSize: CGSize
         let attributedText: NSAttributedString
 
-        let textMessageKind = message.kind.textMessageKind
-        switch textMessageKind {
+        switch message.kind {
         case .attributedText(let text):
             attributedText = text
         case .text(let text), .emoji(let text):

@@ -74,11 +74,11 @@ extension BasicExampleViewController: MessagesDisplayDelegate {
     
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         let avatar = SampleData.shared.getAvatarFor(sender: message.sender)
-        avatarView.set(avatar: avatar)
+        avatarView.set(image: avatar.image, focusOnFaces: false)
     }
 
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        if case MessageKind.photo(let media) = message.kind, let imageURL = media.url {
+        if case MessageKind.photo(_, let media) = message.kind, let imageURL = media.url {
             imageView.kf.setImage(with: imageURL)
         } else {
             imageView.kf.cancelDownloadTask()

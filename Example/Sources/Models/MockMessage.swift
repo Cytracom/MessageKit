@@ -37,43 +37,6 @@ private struct CoordinateItem: LocationItem {
         self.location = location
         self.size = CGSize(width: 240, height: 240)
     }
-
-}
-
-private struct ImageMediaItem: MediaItem {
-
-    var url: URL?
-    var image: UIImage?
-    var placeholderImage: UIImage
-    var size: CGSize
-
-    init(image: UIImage) {
-        self.image = image
-        self.size = CGSize(width: 240, height: 240)
-        self.placeholderImage = UIImage()
-    }
-
-    init(imageURL: URL) {
-        self.url = imageURL
-        self.size = CGSize(width: 240, height: 240)
-        self.placeholderImage = UIImage(imageLiteralResourceName: "image_message_placeholder")
-    }
-}
-
-private struct MockAudioItem: AudioItem {
-
-    var url: URL
-    var size: CGSize
-    var duration: Float
-
-    init(url: URL) {
-        self.url = url
-        self.size = CGSize(width: 160, height: 35)
-        // compute duration
-        let audioAsset = AVURLAsset(url: url)
-        self.duration = Float(CMTimeGetSeconds(audioAsset.duration))
-    }
-
 }
 
 struct MockContactItem: ContactItem {
@@ -102,6 +65,12 @@ struct MockLinkItem: LinkItem {
 }
 
 internal struct MockMessage: MessageType {
+    var isInternalMessage: Bool = false
+
+    var mentionedUsers: [String] = []
+
+    var threadMembers: [Member] = []
+
 
     var messageId: String
     var sender: SenderType {
@@ -133,17 +102,17 @@ internal struct MockMessage: MessageType {
 
     init(image: UIImage, user: MockUser, messageId: String, date: Date) {
         let mediaItem = ImageMediaItem(image: image)
-        self.init(kind: .photo(mediaItem), user: user, messageId: messageId, date: date)
+        self.init(kind: .photo("", mediaItem), user: user, messageId: messageId, date: date)
     }
 
     init(imageURL: URL, user: MockUser, messageId: String, date: Date) {
-        let mediaItem = ImageMediaItem(imageURL: imageURL)
-        self.init(kind: .photo(mediaItem), user: user, messageId: messageId, date: date)
+        let imageItem = ImageMediaItem(image: nil, forMessage: nil, onThread: nil, withMedia: nil, placeholderImage: nil)
+        self.init(kind: .photo("", imageItem), user: user, messageId: messageId, date: date)
     }
 
     init(thumbnail: UIImage, user: MockUser, messageId: String, date: Date) {
         let mediaItem = ImageMediaItem(image: thumbnail)
-        self.init(kind: .video(mediaItem), user: user, messageId: messageId, date: date)
+        self.init(kind: .video("", mediaItem), user: user, messageId: messageId, date: date)
     }
 
     init(location: CLLocation, user: MockUser, messageId: String, date: Date) {
@@ -156,8 +125,8 @@ internal struct MockMessage: MessageType {
     }
 
     init(audioURL: URL, user: MockUser, messageId: String, date: Date) {
-        let audioItem = MockAudioItem(url: audioURL)
-        self.init(kind: .audio(audioItem), user: user, messageId: messageId, date: date)
+        let audioItem = AudioItem(url: audioURL, withDuration: 1.0)
+        self.init(kind: .audio(audioItem, ""), user: user, messageId: messageId, date: date)
     }
 
     init(contact: MockContactItem, user: MockUser, messageId: String, date: Date) {

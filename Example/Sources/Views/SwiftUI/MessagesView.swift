@@ -131,7 +131,7 @@ extension MessagesView.Coordinator: InputBarAccessoryViewDelegate {
 extension MessagesView.Coordinator: MessagesLayoutDelegate, MessagesDisplayDelegate {
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         let avatar = SampleData.shared.getAvatarFor(sender: message.sender)
-        avatarView.set(avatar: avatar)
+        avatarView.set(image: avatar.image, focusOnFaces: false)
     }
     func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 20

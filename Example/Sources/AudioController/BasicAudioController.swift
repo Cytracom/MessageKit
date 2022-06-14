@@ -100,7 +100,7 @@ open class BasicAudioController: NSObject, AVAudioPlayerDelegate {
     ///   - audioCell: The `AudioMessageCell` that needs to be updated while audio is playing.
     open func playSound(for message: MessageType, in audioCell: AudioMessageCell) {
         switch message.kind {
-        case .audio(let item):
+        case .audio(let item, _):
             playingCell = audioCell
             playingMessage = message
             guard let player = try? AVAudioPlayer(contentsOf: item.url) else {

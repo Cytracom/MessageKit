@@ -41,21 +41,10 @@ open class MessagesCollectionView: UICollectionView {
         return messagesCollectionViewFlowLayout.isTypingIndicatorViewHidden
     }
 
-    /// Display the date of message by swiping left.
-    /// The default value of this property is `false`.
-    internal var showMessageTimestampOnSwipeLeft: Bool = false
-
     private var indexPathForLastItem: IndexPath? {
-        guard numberOfSections > 0 else { return nil }
-        
-        for offset in 1...numberOfSections {
-            let section = numberOfSections - offset
-            let lastItem = numberOfItems(inSection: section) - 1
-            if lastItem >= 0 {
-                return IndexPath(item: lastItem, section: section)
-            }
-        }
-        return nil
+        let lastSection = numberOfSections - 1
+        guard lastSection >= 0, numberOfItems(inSection: lastSection) > 0 else { return nil }
+        return IndexPath(item: numberOfItems(inSection: lastSection) - 1, section: lastSection)
     }
 
     open var messagesCollectionViewFlowLayout: MessagesCollectionViewFlowLayout {
@@ -69,11 +58,11 @@ open class MessagesCollectionView: UICollectionView {
 
     public override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
-        backgroundColor = .collectionViewBackground
+        backgroundColor = .white
         registerReusableViews()
         setupGestureRecognizers()
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(frame: .zero, collectionViewLayout: MessagesCollectionViewFlowLayout())
     }
@@ -95,56 +84,68 @@ open class MessagesCollectionView: UICollectionView {
         register(MessageReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
         register(MessageReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter)
     }
-    
+
     private func setupGestureRecognizers() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
         tapGesture.delaysTouchesBegan = true
         addGestureRecognizer(tapGesture)
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture(_:)))
+        longPressGesture.minimumPressDuration = 0.5
+        longPressGesture.delaysTouchesBegan = false
+        addGestureRecognizer(longPressGesture)
     }
-    
+
     @objc
     open func handleTapGesture(_ gesture: UIGestureRecognizer) {
         guard gesture.state == .ended else { return }
-        
+
         let touchLocation = gesture.location(in: self)
         guard let indexPath = indexPathForItem(at: touchLocation) else { return }
-        
+
         let cell = cellForItem(at: indexPath) as? MessageCollectionViewCell
         cell?.handleTapGesture(gesture)
+    }
+
+    @objc
+    func handleLongPressGesture(_ gesture: UIGestureRecognizer) {
+        guard gesture.state == .began else { return }
+
+        let touchLocation = gesture.location(in: self)
+        guard let indexPath = indexPathForItem(at: touchLocation) else { return }
+        let cell = cellForItem(at: indexPath) as? MessageCollectionViewCell
+        cell?.handleLongPressGesture(gesture)
+    }
+
+    public func scrollToBottom(animated: Bool = false) {
+        let collectionViewContentHeight = collectionViewLayout.collectionViewContentSize.height
+
+        performBatchUpdates(nil) { _ in
+            self.scrollRectToVisible(CGRect(0.0, collectionViewContentHeight - 1.0, 1.0, 1.0), animated: animated)
+        }
     }
 
     // NOTE: It's possible for small content size this wouldn't work - https://github.com/MessageKit/MessageKit/issues/725
     public func scrollToLastItem(at pos: UICollectionView.ScrollPosition = .bottom, animated: Bool = true) {
         guard let indexPath = indexPathForLastItem else { return }
-        
+
         scrollToItem(at: indexPath, at: pos, animated: animated)
     }
-    
+
     public func reloadDataAndKeepOffset() {
         // stop scrolling
         setContentOffset(contentOffset, animated: false)
-        
+
         // calculate the offset and reloadData
         let beforeContentSize = contentSize
         reloadData()
         layoutIfNeeded()
         let afterContentSize = contentSize
-        
+
         // reset the contentOffset after data is updated
         let newOffset = CGPoint(
             x: contentOffset.x + (afterContentSize.width - beforeContentSize.width),
             y: contentOffset.y + (afterContentSize.height - beforeContentSize.height))
         setContentOffset(newOffset, animated: false)
-    }
-
-    // MARK: - Typing Indicator API
-
-    /// Notifies the layout that the typing indicator will change state
-    ///
-    /// - Parameters:
-    ///   - isHidden: A Boolean value that is to be the new state of the typing indicator
-    internal func setTypingIndicatorViewHidden(_ isHidden: Bool) {
-        messagesCollectionViewFlowLayout.setTypingIndicatorViewHidden(isHidden)
     }
     
     /// A method that by default checks if the section is the last in the

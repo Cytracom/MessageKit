@@ -22,28 +22,31 @@
  SOFTWARE.
  */
 
-import Foundation
 import UIKit
 
 open class MediaMessageSizeCalculator: MessageSizeCalculator {
+    
+    var messageLabelInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 4)
 
+    func messageLabelInsets(for message: MessageType) -> UIEdgeInsets {
+        return messageLabelInsets
+    }
+    
     open override func messageContainerSize(for message: MessageType, at indexPath: IndexPath) -> CGSize {
         let maxWidth = messageContainerMaxWidth(for: message, at: indexPath)
-        let sizeForMediaItem = { (maxWidth: CGFloat, item: MediaItem) -> CGSize in
-            if maxWidth < item.size.width {
-                // Maintain the ratio if width is too great
-                let height = maxWidth * item.size.height / item.size.width
-                return CGSize(width: maxWidth, height: height)
-            }
-            return item.size
-        }
+        var messageContainerSize: CGSize
+        let attributedText: NSAttributedString
         switch message.kind {
-        case .photo(let item):
-            return sizeForMediaItem(maxWidth, item)
-        case .video(let item):
-            return sizeForMediaItem(maxWidth, item)
+        case .gif(let text, _), .photo(let text, _), .video(let text, _):
+            attributedText = NSAttributedString(string: text, attributes: [.font: UIFont(fontStyle: .graphikRegular, size: 14.0)!])
         default:
             fatalError("messageContainerSize received unhandled MessageDataType: \(message.kind)")
         }
+        messageContainerSize = labelSize(for: attributedText, considering: maxWidth, for: message)
+        messageContainerSize = CGSize(width: maxWidth, height: messageContainerSize.height)
+        let messageInsets = messageLabelInsets(for: message)
+        messageContainerSize.width += messageInsets.horizontal
+        messageContainerSize.height += messageInsets.vertical + 64.0
+        return messageContainerSize
     }
 }

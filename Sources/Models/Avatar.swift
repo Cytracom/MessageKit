@@ -29,7 +29,9 @@ import UIKit
 public struct Avatar {
     
     // MARK: - Properties
-    
+
+    public let isDefault: Bool
+
     /// The image to be used for an `AvatarView`.
     public let image: UIImage?
     
@@ -39,8 +41,9 @@ public struct Avatar {
     public var initials: String = "?"
     
     // MARK: - Initializer
-    
-    public init(image: UIImage? = nil, initials: String = "?") {
+
+    public init(image: UIImage? = nil, isDefault: Bool = false, initials: String = "?") {
+        self.isDefault = isDefault
         self.image = image
         self.initials = initials
     }

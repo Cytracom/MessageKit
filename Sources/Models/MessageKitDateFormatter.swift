@@ -31,15 +31,26 @@ open class MessageKitDateFormatter {
     public static let shared = MessageKitDateFormatter()
 
     private let formatter = DateFormatter()
-
+    
     // MARK: - Initializer
-
+    
     private init() {}
-
+    
     // MARK: - Methods
-
+    
     public func string(from date: Date) -> String {
-        configureDateFormatter(for: date)
+        if Calendar.current.isDateInToday(date) {
+            return "Today"
+        } else if Calendar.current.isDateInYesterday(date) {
+            return "Yesterday"
+        } else {
+            configureDateFormatter(for: date)
+            return formatter.string(from: date)
+        }
+    }
+    
+    public func messageTimeString(from date: Date) -> String {
+        formatter.dateFormat = "h:mm a"
         return formatter.string(from: date)
     }
 
@@ -50,16 +61,12 @@ open class MessageKitDateFormatter {
 
     open func configureDateFormatter(for date: Date) {
         switch true {
-        case Calendar.current.isDateInToday(date) || Calendar.current.isDateInYesterday(date):
-            formatter.doesRelativeDateFormatting = true
-            formatter.dateStyle = .short
-            formatter.timeStyle = .short
         case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .weekOfYear):
-            formatter.dateFormat = "EEEE h:mm a"
+            formatter.dateFormat = "EEEE" // h:mm a
         case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .year):
-            formatter.dateFormat = "E, d MMM, h:mm a"
+            formatter.dateFormat = "MMMM d, yyyy" // , h:mm a
         default:
-            formatter.dateFormat = "MMM d, yyyy, h:mm a"
+            formatter.dateFormat = "MMMM d, yyyy" // , h:mm a
         }
     }
     

@@ -45,7 +45,8 @@ open class TextMessageCell: MessageContentCell {
         super.apply(layoutAttributes)
         if let attributes = layoutAttributes as? MessagesCollectionViewLayoutAttributes {
             messageLabel.textInsets = attributes.messageLabelInsets
-            messageLabel.messageLabelFont = attributes.messageLabelFont
+            messageLabel.textAlignment = .left
+            messageLabel.lineFragmentPadding = -5.0
             messageLabel.frame = messageContainerView.bounds
         }
     }
@@ -61,8 +62,8 @@ open class TextMessageCell: MessageContentCell {
         messageContainerView.addSubview(messageLabel)
     }
 
-    open override func configure(with message: MessageType, at indexPath: IndexPath, and messagesCollectionView: MessagesCollectionView) {
-        super.configure(with: message, at: indexPath, and: messagesCollectionView)
+    open override func configure(with message: MessageType, at indexPath: IndexPath, and messagesCollectionView: MessagesCollectionView, mentionedFirstLastName: [String], isInternal: Bool) {
+        super.configure(with: message, at: indexPath, and: messagesCollectionView, mentionedFirstLastName: mentionedFirstLastName, isInternal: isInternal)
 
         guard let displayDelegate = messagesCollectionView.messagesDisplayDelegate else {
             fatalError(MessageKitError.nilMessagesDisplayDelegate)
@@ -76,15 +77,14 @@ open class TextMessageCell: MessageContentCell {
                 let attributes = displayDelegate.detectorAttributes(for: detector, and: message, at: indexPath)
                 messageLabel.setAttributes(attributes, detector: detector)
             }
-            let textMessageKind = message.kind.textMessageKind
-            switch textMessageKind {
-            case .text(let text), .emoji(let text):
+            switch message.kind {
+            case .text(let text):
+                messageLabel.textColor = .black
+                messageLabel.formatMessage(text,mentionedFirstLastName: mentionedFirstLastName)
+            case .emoji(let text):
                 let textColor = displayDelegate.textColor(for: message, at: indexPath, in: messagesCollectionView)
-                messageLabel.text = text
                 messageLabel.textColor = textColor
-                if let font = messageLabel.messageLabelFont {
-                    messageLabel.font = font
-                }
+                messageLabel.formatMessage(text, mentionedFirstLastName: mentionedFirstLastName)
             case .attributedText(let text):
                 messageLabel.attributedText = text
             default:
@@ -92,7 +92,7 @@ open class TextMessageCell: MessageContentCell {
             }
         }
     }
-    
+
     /// Used to handle the cell's contentView's tap gesture.
     /// Return false when the contentView does not need to handle the gesture.
     open override func cellContentView(canHandle touchPoint: CGPoint) -> Bool {

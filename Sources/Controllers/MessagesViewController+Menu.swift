@@ -22,10 +22,9 @@
  SOFTWARE.
  */
 
-import Foundation
 import UIKit
 
-internal extension MessagesViewController {
+extension MessagesViewController {
 
     // MARK: - Register / Unregister Observers
 
@@ -44,7 +43,7 @@ internal extension MessagesViewController {
     private func menuControllerWillShow(_ notification: Notification) {
 
         guard let currentMenuController = notification.object as? UIMenuController,
-            let selectedIndexPath = selectedIndexPathForMenu else { return }
+              let selectedIndexPath = selectedIndexPathForMenu else { return }
 
         NotificationCenter.default.removeObserver(self, name: UIMenuController.willShowMenuNotification, object: nil)
         defer {
@@ -53,12 +52,9 @@ internal extension MessagesViewController {
                                                    name: UIMenuController.willShowMenuNotification, object: nil)
             selectedIndexPathForMenu = nil
         }
+        currentMenuController.showMenu(from: self.view, rect: self.navigationBarFrame)
 
-        currentMenuController.hideMenu()
-
-        guard let selectedCell = messagesCollectionView.cellForItem(at: selectedIndexPath) as? MessageContentCell else {
-            return
-        }
+        guard let selectedCell = messagesCollectionView.cellForItem(at: selectedIndexPath) as? MessageContentCell else { return }
         let selectedCellMessageBubbleFrame = selectedCell.convert(selectedCell.messageContainerView.frame, to: view)
 
         var messageInputBarFrame: CGRect = .zero
@@ -86,7 +82,6 @@ internal extension MessagesViewController {
         else if selectedCellMessageBubblePlusMenuFrame.intersects(topNavigationBarFrame) {
             currentMenuController.arrowDirection = .up
         }
-
         currentMenuController.showMenu(from: view, rect: targetRect)
     }
 

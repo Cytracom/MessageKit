@@ -36,3 +36,57 @@ open class InsetLabel: UILabel {
     }
 
 }
+
+open class InsetView: UIView {
+    
+    public let label = InsetLabel()
+    open var lineOffset: CGFloat = 16.0
+    open var lineHeight: CGFloat = 2.0
+    open var lineColor = UIColor.darkGrey.withAlphaComponent(0.6)
+    open var shouldDrawLine: Bool = true
+    
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        initLabel()
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        initLabel()
+    }
+    
+    convenience init() { self.init(frame: CGRect.zero) }
+    
+    open func initLabel() {
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        let lead = NSLayoutConstraint(item: self, attribute: .leading, relatedBy: .lessThanOrEqual, toItem: label, attribute: .leading, multiplier: 1, constant: 0)
+        let trail = NSLayoutConstraint(item: self, attribute: .trailing, relatedBy: .greaterThanOrEqual, toItem: label, attribute: .trailing, multiplier: 1, constant: 0)
+        let centerX = NSLayoutConstraint(item: self, attribute: .centerX, relatedBy: .equal, toItem: label, attribute: .centerX, multiplier: 1, constant: 0)
+        addSubview(label)
+        label.heightAnchor.constraint(equalToConstant: 24.0).isActive = true
+        label.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        addConstraints([lead, trail, centerX])
+        isOpaque = false
+    }
+    
+    open override func draw(_ rect: CGRect) {
+        if shouldDrawLine {
+            let lineWidth = label.frame.minX - rect.minX - lineOffset
+            if lineWidth <= 0 { return }
+            
+            let lineLeft = UIBezierPath(rect: CGRect(rect.minX + lineOffset, rect.midY, lineWidth, 1))
+            let lineRight = UIBezierPath(rect: CGRect(label.frame.maxX, rect.midY, lineWidth, 1))
+            
+            lineLeft.lineWidth = lineHeight
+            lineColor.set()
+//            lineLeft.stroke()
+            lineLeft.fill()
+            
+            lineRight.lineWidth = lineHeight
+            lineColor.set()
+//            lineRight.stroke()
+            lineRight.fill()
+        }
+    }
+}

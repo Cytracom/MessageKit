@@ -32,12 +32,15 @@ let package = Package(
         .library(name: "MessageKit", targets: ["MessageKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/nathantannar4/InputBarAccessoryView", .upToNextMajor(from: "6.1.0"))
+        .package(url: "https://github.com/kirualex/SwiftyGif.git", .upToNextMajor(from: "5.0.0")),
+        .package(url: "https://github.com/nathantannar4/InputBarAccessoryView", .upToNextMajor(from: "6.1.0")),
+        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "5.0.0"),
+        .package(url: "https://github.com/malcommac/SwiftDate.git", from: "5.0.0"),
     ],
     targets: [
         .target(
             name: "MessageKit",
-            dependencies: ["InputBarAccessoryView"],
+            dependencies: ["InputBarAccessoryView", "SwiftyGif", "Kingfisher", "SwiftDate"],
             path: "Sources",
             exclude: ["Supporting/Info.plist", "Supporting/MessageKit.h"],
             swiftSettings: [SwiftSetting.define("IS_SPM")]

@@ -159,31 +159,43 @@ open class AvatarView: UIImageView {
         return CGRect(startX+2, startY, w-4, h)
     }
 
-    // MARK: - Internal methods
-
-    internal func prepareView() {
-        backgroundColor = .avatarViewBackground
+    func prepareView() {
+        backgroundColor = .globalTintColor
         contentMode = .scaleAspectFill
         layer.masksToBounds = true
         clipsToBounds = true
         setCorner(radius: nil)
     }
 
-    // MARK: - Open setters
-    
-    open func set(avatar: Avatar) {
-        if let image = avatar.image {
-            self.image = image
+    // MARK: - setters
+
+    open func set(avatar: Avatar, isC2C: Bool = false) {
+        if avatar.isDefault {
+            self.contentMode = .center
+            backgroundColor = UIColor.white.withAlphaComponent(0.20)
+            backgroundColor = .globalTintColor
+            if let image = avatar.image {
+                let resizedDefaultImage = UIImage.resized(image, for: CGSize(width: self.bounds.width / 2, height: self.bounds.height / 1.6))
+                self.image = resizedDefaultImage
+            } else {
+                initials = avatar.initials
+            }
         } else {
-            initials = avatar.initials
+            self.contentMode = .scaleAspectFill
+            backgroundColor = isC2C ? UIColor.c2cBlue : UIColor.smsGreen
+            if let image = avatar.image {
+                self.image = image
+            } else {
+                initials = avatar.initials
+            }
         }
     }
 
     open func setCorner(radius: CGFloat?) {
         guard let radius = radius else {
             //if corner radius not set default to Circle
-            let cornerRadius = min(frame.width, frame.height)
-            layer.cornerRadius = cornerRadius/2
+//            let cornerRadius = min(frame.width, frame.height)
+            layer.cornerRadius = 4.0
             return
         }
         self.radius = radius
@@ -194,5 +206,4 @@ open class AvatarView: UIImageView {
 
 fileprivate extension FloatingPoint {
     var degreesToRadians: Self { return self * .pi / 180 }
-    var radiansToDegrees: Self { return self * 180 / .pi }
 }

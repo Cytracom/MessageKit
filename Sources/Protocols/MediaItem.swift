@@ -22,22 +22,62 @@
  SOFTWARE.
  */
 
-import Foundation
 import UIKit
 
 /// A protocol used to represent the data for a media message.
 public protocol MediaItem {
-
+    
+    var message: Message? { get }
+    
+    var media: MessageMedia? { get }
+    
+    var threadId: String? { get }
+    
     /// The url where the media is located.
     var url: URL? { get }
-
+    
     /// The image.
-    var image: UIImage? { get }
-
-    /// A placeholder image for when the image is obtained asynchronously.
+    var image: UIImage? { get set }
+    
+    /// A placeholder image for when the image is obtained asychronously.
     var placeholderImage: UIImage { get }
-
+    
     /// The size of the media item.
     var size: CGSize { get }
+    
+}
+public struct ImageMediaItem: MediaItem {
+
+    public var message: Message?
+    public var media: MessageMedia?
+    public var url: URL?
+    public var image: UIImage?
+    public var placeholderImage: UIImage
+    public var size: CGSize
+    public var threadId: String?
+
+    public init(image: UIImage? = nil, forMessage message: Message? = nil, onThread thread: String? = nil, withMedia media: MessageMedia? = nil, placeholderImage placeholder: UIImage? = nil) {
+        self.image = image
+        self.message = message
+        self.media = media
+        self.threadId = thread
+        self.size = CGSize(width: 312, height: 57)
+        if let media = media {
+            if let mediaItemURL = URL(string: media.url) {
+                self.url = mediaItemURL
+                let mediaPathExtension = mediaItemURL.pathExtension
+                let mimeType = MimeType.mime(for: mediaPathExtension)
+                if mimeType.contains("application") {
+                    self.size = CGSize(width: 120, height: 28)
+                }
+            }
+        }
+        if let placeholder = placeholder {
+            self.placeholderImage = placeholder
+        } else {
+            let placeholderImage = UIImage(systemName: "photo.on.rectangle.angled")!
+            self.placeholderImage = placeholderImage
+        }
+    }
 
 }

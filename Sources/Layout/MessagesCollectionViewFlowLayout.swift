@@ -86,7 +86,7 @@ open class MessagesCollectionViewFlowLayout: UICollectionViewFlowLayout {
     // MARK: - Methods
     
     private func setupView() {
-        sectionInset = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
+        sectionInset = UIEdgeInsets(top: 4, left: 0, bottom: 4, right: 0)
     }
     
     private func setupObserver() {
@@ -157,6 +157,7 @@ open class MessagesCollectionViewFlowLayout: UICollectionViewFlowLayout {
 
     // MARK: - Cell Sizing
 
+    lazy open var headerSizeCalculator = HeaderSizeCalculator(layout: self)
     lazy open var textMessageSizeCalculator = TextMessageSizeCalculator(layout: self)
     lazy open var attributedTextMessageSizeCalculator = TextMessageSizeCalculator(layout: self)
     lazy open var emojiMessageSizeCalculator: TextMessageSizeCalculator = {
@@ -164,6 +165,7 @@ open class MessagesCollectionViewFlowLayout: UICollectionViewFlowLayout {
         sizeCalculator.messageLabelFont = UIFont.systemFont(ofSize: sizeCalculator.messageLabelFont.pointSize * 2)
         return sizeCalculator
     }()
+    lazy open var fileMessageSizeCalculator = FileMessageSizeCalculator(layout: self)
     lazy open var photoMessageSizeCalculator = MediaMessageSizeCalculator(layout: self)
     lazy open var videoMessageSizeCalculator = MediaMessageSizeCalculator(layout: self)
     lazy open var locationMessageSizeCalculator = LocationMessageSizeCalculator(layout: self)
@@ -183,22 +185,28 @@ open class MessagesCollectionViewFlowLayout: UICollectionViewFlowLayout {
         }
         let message = messagesDataSource.messageForItem(at: indexPath, in: messagesCollectionView)
         switch message.kind {
+        case .header:
+            return headerSizeCalculator
         case .text:
-            return messagesLayoutDelegate.textCellSizeCalculator(for: message, at: indexPath, in: messagesCollectionView) ?? textMessageSizeCalculator
+            return textMessageSizeCalculator
         case .attributedText:
-            return messagesLayoutDelegate.attributedTextCellSizeCalculator(for: message, at: indexPath, in: messagesCollectionView) ??  attributedTextMessageSizeCalculator
+            return attributedTextMessageSizeCalculator
         case .emoji:
-            return messagesLayoutDelegate.emojiCellSizeCalculator(for: message, at: indexPath, in: messagesCollectionView) ??  emojiMessageSizeCalculator
+            return emojiMessageSizeCalculator
         case .photo:
-            return messagesLayoutDelegate.photoCellSizeCalculator(for: message, at: indexPath, in: messagesCollectionView) ??  photoMessageSizeCalculator
+            return photoMessageSizeCalculator
         case .video:
-            return messagesLayoutDelegate.videoCellSizeCalculator(for: message, at: indexPath, in: messagesCollectionView) ??  videoMessageSizeCalculator
+            return videoMessageSizeCalculator
+        case .file:
+            return fileMessageSizeCalculator
+        case .gif:
+            return photoMessageSizeCalculator
         case .location:
-            return messagesLayoutDelegate.locationCellSizeCalculator(for: message, at: indexPath, in: messagesCollectionView) ??  locationMessageSizeCalculator
+            return locationMessageSizeCalculator
         case .audio:
-            return messagesLayoutDelegate.audioCellSizeCalculator(for: message, at: indexPath, in: messagesCollectionView) ??  audioMessageSizeCalculator
+            return audioMessageSizeCalculator
         case .contact:
-            return messagesLayoutDelegate.contactCellSizeCalculator(for: message, at: indexPath, in: messagesCollectionView) ??  contactMessageSizeCalculator
+            return contactMessageSizeCalculator
         case .linkPreview:
             return linkPreviewMessageSizeCalculator
         case .custom:
@@ -208,7 +216,8 @@ open class MessagesCollectionViewFlowLayout: UICollectionViewFlowLayout {
 
     open func sizeForItem(at indexPath: IndexPath) -> CGSize {
         let calculator = cellSizeCalculatorForItem(at: indexPath)
-        return calculator.sizeForItem(at: indexPath)
+        let value = calculator.sizeForItem(at: indexPath)
+        return (value.width >= 0 && value.height >= 0) ? value : .zero
     }
     
     /// Set `incomingAvatarSize` of all `MessageSizeCalculator`s
@@ -318,7 +327,9 @@ open class MessagesCollectionViewFlowLayout: UICollectionViewFlowLayout {
 
     /// Get all `MessageSizeCalculator`s
     open func messageSizeCalculators() -> [MessageSizeCalculator] {
-        return [textMessageSizeCalculator,
+        return [headerSizeCalculator,
+                textMessageSizeCalculator,
+                fileMessageSizeCalculator,
                 attributedTextMessageSizeCalculator,
                 emojiMessageSizeCalculator,
                 photoMessageSizeCalculator,

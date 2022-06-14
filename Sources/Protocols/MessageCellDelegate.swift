@@ -38,6 +38,8 @@ public protocol MessageCellDelegate: MessageLabelDelegate {
     /// method `messageForItem(at:indexPath:messagesCollectionView)`.
     func didTapBackground(in cell: MessageCollectionViewCell)
 
+    func didLongPressMessage(in cell: MessageCollectionViewCell)
+
     /// Triggered when a tap occurs in the `MessageContainerView`.
     ///
     /// - Parameters:
@@ -164,6 +166,8 @@ public protocol MessageCellDelegate: MessageLabelDelegate {
 public extension MessageCellDelegate {
 
     func didTapBackground(in cell: MessageCollectionViewCell) {}
+
+    func didLongPressMessage(in cell: MessageCollectionViewCell) {}
 
     func didTapMessage(in cell: MessageCollectionViewCell) {}
 

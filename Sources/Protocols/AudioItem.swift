@@ -22,20 +22,20 @@
  SOFTWARE.
  */
 
-import Foundation
 import UIKit
 import class AVFoundation.AVAudioPlayer
 
 /// A protocol used to represent the data for an audio message.
-public protocol AudioItem {
-
+public struct AudioItem {
+    
     /// The url where the audio file is located.
-    var url: URL { get }
-
+    public var url: URL
+    
     /// The audio file duration in seconds.
-    var duration: Float { get }
+    public var duration: Float
 
-    /// The size of the audio item.
-    var size: CGSize { get }
-
+    public init(url: URL, withDuration duration: Float) {
+        self.url = url
+        self.duration = duration
+    }
 }

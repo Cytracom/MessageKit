@@ -22,23 +22,35 @@
  SOFTWARE.
  */
 
-import Foundation
 import UIKit
 
 open class AudioMessageSizeCalculator: MessageSizeCalculator {
 
+    var messageLabelInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 4)
+    
+    var messageLabelFont: UIFont = UIFont(fontStyle: .graphikRegular, size: 14.0)!
+    
+    func messageLabelInsets(for message: MessageType) -> UIEdgeInsets {
+        return messageLabelInsets
+    }
+    
     open override func messageContainerSize(for message: MessageType, at indexPath: IndexPath) -> CGSize {
+        let maxWidth = messageContainerMaxWidth(for: message, at: indexPath)
+
+        var messageContainerSize: CGSize
+        let attributedText: NSAttributedString
+
         switch message.kind {
-        case .audio(let item):
-            let maxWidth = messageContainerMaxWidth(for: message, at: indexPath)
-            if maxWidth < item.size.width {
-                // Maintain the ratio if width is too great
-                let height = maxWidth * item.size.height / item.size.width
-                return CGSize(width: maxWidth, height: height)
-            }
-            return item.size
+        case .audio(_, let text):
+            attributedText = NSAttributedString(string: text, attributes: [.font: UIFont(fontStyle: .graphikRegular, size: 14.0)!])
         default:
             fatalError("messageContainerSize received unhandled MessageDataType: \(message.kind)")
         }
+        messageContainerSize = labelSize(for: attributedText, considering: maxWidth, for: message)
+        messageContainerSize = CGSize(width: maxWidth, height: messageContainerSize.height)
+        let messageInsets = messageLabelInsets(for: message)
+        messageContainerSize.width += messageInsets.horizontal
+        messageContainerSize.height += messageInsets.vertical + 64.0
+        return messageContainerSize
     }
 }

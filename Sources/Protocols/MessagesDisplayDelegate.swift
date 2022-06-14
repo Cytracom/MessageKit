@@ -237,13 +237,11 @@ public extension MessagesDisplayDelegate {
         case .emoji:
             return .clear
         default:
-            guard let dataSource = messagesCollectionView.messagesDataSource else {
-                return .white
-            }
-            return dataSource.isFromCurrentSender(message: message) ? .outgoingMessageBackground : .incomingMessageBackground
+            guard let dataSource = messagesCollectionView.messagesDataSource else { return .white }
+            return dataSource.isFromCurrentSender(message: message) ? .outgoingGreen : .incomingGray
         }
     }
-    
+
     func messageHeaderView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
         return messagesCollectionView.dequeueReusableHeaderView(MessageReusableView.self, for: indexPath)
     }
@@ -261,10 +259,7 @@ public extension MessagesDisplayDelegate {
     // MARK: - Text Messages Defaults
 
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        guard let dataSource = messagesCollectionView.messagesDataSource else {
-            fatalError(MessageKitError.nilMessagesDataSource)
-        }
-        return dataSource.isFromCurrentSender(message: message) ? .outgoingMessageLabel : .incomingMessageLabel
+        return UIColor.darkGrey
     }
 
     func enabledDetectors(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> [DetectorType] {
@@ -301,10 +296,7 @@ public extension MessagesDisplayDelegate {
     }
 
     func audioTintColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        guard let dataSource = messagesCollectionView.messagesDataSource else {
-            fatalError(MessageKitError.nilMessagesDataSource)
-        }
-        return dataSource.isFromCurrentSender(message: message) ? .outgoingAudioMessageTint : .incomingAudioMessageTint
+        return UIColor.royalBlue
     }
 
     func audioProgressTextFormat(_ duration: Float, for audioCell: AudioMessageCell, in messageCollectionView: MessagesCollectionView) -> String {

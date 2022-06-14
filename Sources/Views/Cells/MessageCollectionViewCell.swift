@@ -41,4 +41,8 @@ open class MessageCollectionViewCell: UICollectionViewCell {
     open func handleTapGesture(_ gesture: UIGestureRecognizer) {
         // Should be overridden
     }
+    
+    open func handleLongPressGesture(_ gesture: UIGestureRecognizer) {
+        
+    }
 }
