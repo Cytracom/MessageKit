@@ -33,14 +33,14 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/kirualex/SwiftyGif.git", .upToNextMajor(from: "5.0.0")),
-        .package(url: "https://github.com/nathantannar4/InputBarAccessoryView", .upToNextMajor(from: "6.1.0")),
         .package(url: "https://github.com/onevcat/Kingfisher.git", from: "5.0.0"),
         .package(url: "https://github.com/malcommac/SwiftDate.git", from: "5.0.0"),
+        .package(url: "https://github.com/SnapKit/SnapKit.git", .upToNextMajor(from: "5.0.1")),
     ],
     targets: [
         .target(
             name: "MessageKit",
-            dependencies: ["InputBarAccessoryView", "SwiftyGif", "Kingfisher", "SwiftDate"],
+            dependencies: ["SwiftyGif", "Kingfisher", "SwiftDate", "SnapKit"],
             path: "Sources",
             exclude: ["Supporting/Info.plist", "Supporting/MessageKit.h"],
             swiftSettings: [SwiftSetting.define("IS_SPM")]
