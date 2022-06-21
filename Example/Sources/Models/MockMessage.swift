@@ -55,7 +55,7 @@ struct MockContactItem: ContactItem {
     
 }
 
-struct MockLinkItem: LinkItem {
+public struct MockLinkItem: LinkItem {
     let text: String?
     let attributedText: NSAttributedString?
     let url: URL
@@ -133,7 +133,7 @@ internal struct MockMessage: MessageType {
         self.init(kind: .contact(contact), user: user, messageId: messageId, date: date)
     }
 
-    init(linkItem: LinkItem, user: MockUser, messageId: String, date: Date) {
+    init(linkItem: MockLinkItem, user: MockUser, messageId: String, date: Date) {
         self.init(kind: .linkPreview(linkItem), user: user, messageId: messageId, date: date)
     }
 }

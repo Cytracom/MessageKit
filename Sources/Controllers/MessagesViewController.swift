@@ -249,7 +249,26 @@ open class MessagesViewController: UIViewController, UICollectionViewDelegateFlo
             let cell = messagesCollectionView.dequeueReusableCell(HeaderCell.self, for: indexPath)
             cell.configure(with: message, at: indexPath, and: messagesCollectionView, mentionedFirstLastName: [], isInternal: isInternalMessage)
             return cell
-        case .text, .attributedText, .emoji:
+        case .attributedText:
+            let cell = messagesCollectionView.dequeueReusableCell(TextMessageCell.self, for: indexPath)
+            cell.configure(with: message, at: indexPath, and: messagesCollectionView, mentionedFirstLastName: mentionedFirstLastName, isInternal: isInternalMessage)
+            return cell
+        case .text(let text), .emoji(let text):
+            if text.isValidURL, let msgURL = URL(string: text) {
+                var newMsg = message
+                let linkPreview = LinkPreview(
+                    text: text,
+                    attributedText: nil,
+                    url: msgURL,
+                    title: "Reddit - Dive into anything",
+                    teaser: "Reddit is a network of communities where people can dive into their interests, hobbies and passions. There's a community for whatever you're interested in ...",
+                    thumbnailImage: UIImage(systemName: "envelope")!)
+                newMsg.kind = MessageKind.linkPreview(linkPreview)
+                let cell = messagesCollectionView.dequeueReusableCell(LinkPreviewMessageCell.self, for: indexPath)
+                cell.configure(with: newMsg, at: indexPath, and: messagesCollectionView, mentionedFirstLastName: mentionedFirstLastName, isInternal: isInternalMessage)
+                return cell
+            }
+
             let cell = messagesCollectionView.dequeueReusableCell(TextMessageCell.self, for: indexPath)
             cell.configure(with: message, at: indexPath, and: messagesCollectionView, mentionedFirstLastName: mentionedFirstLastName, isInternal: isInternalMessage)
             return cell

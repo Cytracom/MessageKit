@@ -55,6 +55,9 @@ open class TextMessageSizeCalculator: MessageSizeCalculator {
             attributedText = text
         case .text(let text), .emoji(let text):
             attributedText = NSAttributedString(string: text, attributes: [.font: messageLabelFont])
+        case .linkPreview(let link):
+            attributedText = NSAttributedString(string: link.text ?? "", attributes: [.font: messageLabelFont])
+            break
         default:
             fatalError("messageContainerSize received unhandled MessageDataType: \(message.kind)")
         }
@@ -62,8 +65,8 @@ open class TextMessageSizeCalculator: MessageSizeCalculator {
         messageContainerSize = labelSize(for: attributedText, considering: maxWidth)
 
         let messageInsets = messageLabelInsets(for: message)
-        messageContainerSize.width += messageInsets.horizontal
-        messageContainerSize.height += messageInsets.vertical
+        messageContainerSize.width += messageInsets.horizontal + 200
+        messageContainerSize.height += messageInsets.vertical + 100
 
         return messageContainerSize
     }

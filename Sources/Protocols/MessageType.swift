@@ -40,7 +40,7 @@ public protocol MessageType {
     var sentDate: Date { get }
     
     /// The kind of message and its underlying kind.
-    var kind: MessageKind { get }
+    var kind: MessageKind { get set }
     
     var mentionedUsers: [String] { get }
     
