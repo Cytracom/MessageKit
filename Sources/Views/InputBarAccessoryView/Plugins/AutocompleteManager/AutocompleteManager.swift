@@ -60,6 +60,8 @@ open class AutocompleteManager: NSObject, InputPlugin, UITextViewDelegate, UITab
     /// The `AutocompleteTableView` that renders available autocompletes for the `currentSession`
     open lazy var tableView: AutocompleteTableView = { [weak self] in
         let tableView = AutocompleteTableView()
+        let extensionCellNib = UINib(nibName: "ExtensionTableViewCell", bundle: nil)
+        tableView.register(extensionCellNib, forCellReuseIdentifier: "extensionCell")
         tableView.register(AutocompleteCell.self, forCellReuseIdentifier: AutocompleteCell.reuseIdentifier)
         tableView.separatorStyle = .none
         if #available(iOS 13, *) {
