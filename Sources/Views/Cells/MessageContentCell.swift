@@ -31,6 +31,9 @@ open class MessageContentCell: MessageCollectionViewCell {
     /// The image view displaying the avatar.
     open var avatarView = AvatarView()
 
+    open var indexPath: IndexPath?
+    open var messageType: MessageType?
+
     /// The container used for styling and holding the message's content view.
     open var messageContainerView: MessageContainerView = {
         let containerView = MessageContainerView()
@@ -103,6 +106,8 @@ open class MessageContentCell: MessageCollectionViewCell {
         cellBottomLabel.label.text = nil
         messageTopLabel.text = nil
         messageBottomLabel.text = nil
+        indexPath = nil
+        messageType = nil
     }
 
     open func setupSubviews() {
@@ -139,6 +144,9 @@ open class MessageContentCell: MessageCollectionViewCell {
     ///   - indexPath: The `IndexPath` for this cell.
     ///   - messagesCollectionView: The `MessagesCollectionView` in which this cell is contained.
     open func configure(with message: MessageType, at indexPath: IndexPath, and messagesCollectionView: MessagesCollectionView, mentionedFirstLastName: [String], isInternal: Bool) {
+        self.indexPath = indexPath
+        self.messageType = message
+
         guard let dataSource = messagesCollectionView.messagesDataSource else {
             fatalError(MessageKitError.nilMessagesDataSource)
         }
@@ -310,9 +318,9 @@ open class MessageContentCell: MessageCollectionViewCell {
         messageTopLabel.textAlignment = attributes.messageTopLabelAlignment.textAlignment
         messageTopLabel.textInsets = attributes.messageTopLabelAlignment.textInsets
 
-        let y = messageContainerView.frame.minY - attributes.messageContainerPadding.top - attributes.messageTopLabelSize.height - 6.0
+        let y = messageContainerView.frame.minY - attributes.messageContainerPadding.top - attributes.messageTopLabelSize.height - 10.0
         let origin = CGPoint(x: 6.0, y: y)
-        let size = CGSize(width: attributes.messageTopLabelSize.width, height: 20.0)
+        let size = CGSize(width: attributes.messageTopLabelSize.width, height: 22.0)
         messageTopLabel.frame = CGRect(origin: origin, size: size)
     }
 

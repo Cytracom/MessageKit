@@ -187,6 +187,8 @@ public protocol MessagesDataSource: AnyObject {
     ///   - messagesCollectionView: The `MessagesCollectionView` the cell is to be rendered in
     /// - Returns: A `UICollectionViewCell` that indicates a user is typing
     func typingIndicator(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UICollectionViewCell
+
+    func messageStatus(for message: MessageType, at indexPath: IndexPath) -> String?
 }
 
 public extension MessagesDataSource {
@@ -250,5 +252,9 @@ public extension MessagesDataSource {
 
     func typingIndicator(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UICollectionViewCell {
         return messagesCollectionView.dequeueReusableCell(TypingIndicatorCell.self, for: indexPath)
+    }
+
+    func messageStatus(for message: MessageType, at indexPath: IndexPath) -> String? {
+        return nil
     }
 }
