@@ -32,9 +32,9 @@ open class HeaderSizeCalculator: MessageSizeCalculator {
     var messageLabelFont = UIFont(fontStyle: .graphikBold, size: 13.0)!
     
     func messageLabelInsets(for message: MessageType) -> UIEdgeInsets {
-        let dataSource = messagesLayout.messagesDataSource
-        let isFromCurrentSender = dataSource.isFromCurrentSender(message: message)
-        return isFromCurrentSender ? outgoingMessageLabelInsets : incomingMessageLabelInsets
+//        let dataSource = messagesLayout.messagesDataSource
+//        let isFromCurrentSender = dataSource.isFromCurrentSender(message: message)
+        return outgoingMessageLabelInsets
     }
 
     open override func messageContainerMaxWidth(for message: MessageType, at indexPath: IndexPath) -> CGFloat {
