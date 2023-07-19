@@ -34,7 +34,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/kirualex/SwiftyGif.git", .upToNextMajor(from: "5.0.0")),
         .package(url: "https://github.com/onevcat/Kingfisher.git", from: "5.0.0"),
-        .package(url: "https://github.com/malcommac/SwiftDate.git", from: "5.0.0"),
+        .package(url: "https://github.com/malcommac/SwiftDate.git", from: "6.0.0"),
         .package(url: "https://github.com/SnapKit/SnapKit.git", .upToNextMajor(from: "5.0.1")),
     ],
     targets: [
